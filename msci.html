@@ -1,0 +1,453 @@
+<style>
+  .msci-chart-container {
+    width: 100%;
+    max-width: 1200px;
+    height: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .chart-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .chart-subtitle {
+    text-align: center;
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 30px;
+  }
+  
+  .chart-wrapper {
+    position: relative;
+    height: 500px;
+  }
+  
+  .chart-legend {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+  
+  .legend-item {
+    display: flex;
+    align-items: center;
+    margin: 0 15px 10px;
+  }
+  
+  .legend-color {
+    width: 12px;
+    height: 12px;
+    margin-right: 6px;
+    border-radius: 2px;
+  }
+  
+  .annotation-point {
+    cursor: pointer;
+  }
+  
+  .tooltip {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 14px;
+    max-width: 300px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+    z-index: 100;
+    transition: opacity 0.3s;
+  }
+  
+  .tooltip-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+  }
+  
+  .tooltip-date {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 5px;
+  }
+  
+  .tooltip-description {
+    line-height: 1.4;
+  }
+  
+  @media (max-width: 768px) {
+    .msci-chart-container {
+      height: 500px;
+      padding: 10px;
+    }
+    
+    .chart-wrapper {
+      height: 400px;
+    }
+    
+    .chart-title {
+      font-size: 20px;
+    }
+    
+    .chart-subtitle {
+      font-size: 14px;
+    }
+  }
+</style>
+
+<div class="msci-chart-container">
+  <div class="chart-title">MSCI World Index Performance (10-Year)</div>
+  <div class="chart-subtitle">Index performance with annotations of significant global events</div>
+  <div class="chart-wrapper">
+    <canvas id="msciWorldChart"></canvas>
+    <div id="tooltip" class="tooltip" style="display: none;"></div>
+  </div>
+  <div class="chart-legend" id="customLegend"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // MSCI World Index data (monthly closing values from 2014-2024)
+    // Data source: Approximated values for demonstration purposes
+    const msciData = {
+      labels: [
+        // 2014
+        'Jan 2014', 'Feb 2014', 'Mar 2014', 'Apr 2014', 'May 2014', 'Jun 2014', 
+        'Jul 2014', 'Aug 2014', 'Sep 2014', 'Oct 2014', 'Nov 2014', 'Dec 2014',
+        // 2015
+        'Jan 2015', 'Feb 2015', 'Mar 2015', 'Apr 2015', 'May 2015', 'Jun 2015', 
+        'Jul 2015', 'Aug 2015', 'Sep 2015', 'Oct 2015', 'Nov 2015', 'Dec 2015',
+        // 2016
+        'Jan 2016', 'Feb 2016', 'Mar 2016', 'Apr 2016', 'May 2016', 'Jun 2016', 
+        'Jul 2016', 'Aug 2016', 'Sep 2016', 'Oct 2016', 'Nov 2016', 'Dec 2016',
+        // 2017
+        'Jan 2017', 'Feb 2017', 'Mar 2017', 'Apr 2017', 'May 2017', 'Jun 2017', 
+        'Jul 2017', 'Aug 2017', 'Sep 2017', 'Oct 2017', 'Nov 2017', 'Dec 2017',
+        // 2018
+        'Jan 2018', 'Feb 2018', 'Mar 2018', 'Apr 2018', 'May 2018', 'Jun 2018', 
+        'Jul 2018', 'Aug 2018', 'Sep 2018', 'Oct 2018', 'Nov 2018', 'Dec 2018',
+        // 2019
+        'Jan 2019', 'Feb 2019', 'Mar 2019', 'Apr 2019', 'May 2019', 'Jun 2019', 
+        'Jul 2019', 'Aug 2019', 'Sep 2019', 'Oct 2019', 'Nov 2019', 'Dec 2019',
+        // 2020
+        'Jan 2020', 'Feb 2020', 'Mar 2020', 'Apr 2020', 'May 2020', 'Jun 2020', 
+        'Jul 2020', 'Aug 2020', 'Sep 2020', 'Oct 2020', 'Nov 2020', 'Dec 2020',
+        // 2021
+        'Jan 2021', 'Feb 2021', 'Mar 2021', 'Apr 2021', 'May 2021', 'Jun 2021', 
+        'Jul 2021', 'Aug 2021', 'Sep 2021', 'Oct 2021', 'Nov 2021', 'Dec 2021',
+        // 2022
+        'Jan 2022', 'Feb 2022', 'Mar 2022', 'Apr 2022', 'May 2022', 'Jun 2022', 
+        'Jul 2022', 'Aug 2022', 'Sep 2022', 'Oct 2022', 'Nov 2022', 'Dec 2022',
+        // 2023
+        'Jan 2023', 'Feb 2023', 'Mar 2023', 'Apr 2023', 'May 2023', 'Jun 2023', 
+        'Jul 2023', 'Aug 2023', 'Sep 2023', 'Oct 2023', 'Nov 2023', 'Dec 2023',
+        // 2024
+        'Jan 2024', 'Feb 2024', 'Mar 2024', 'Apr 2024'
+      ],
+      values: [
+        // 2014 (starting around 1650)
+        1650, 1678, 1682, 1665, 1698, 1730, 
+        1714, 1740, 1698, 1695, 1730, 1710,
+        // 2015
+        1682, 1750, 1740, 1780, 1790, 1750, 
+        1770, 1650, 1630, 1720, 1730, 1710,
+        // 2016
+        1640, 1630, 1710, 1720, 1730, 1710, 
+        1780, 1790, 1800, 1780, 1790, 1840,
+        // 2017
+        1880, 1920, 1940, 1960, 1990, 1980, 
+        2020, 2030, 2060, 2090, 2120, 2140,
+        // 2018
+        2240, 2180, 2100, 2130, 2160, 2150, 
+        2190, 2210, 2200, 2030, 1980, 1880,
+        // 2019
+        2000, 2080, 2110, 2180, 2100, 2180, 
+        2200, 2160, 2200, 2240, 2300, 2360,
+        // 2020
+        2350, 2200, 1850, 2050, 2150, 2200, 
+        2300, 2450, 2400, 2330, 2550, 2690,
+        // 2021
+        2720, 2780, 2810, 2940, 2980, 3000, 
+        3050, 3120, 3050, 3130, 3080, 3150,
+        // 2022
+        3000, 2900, 2950, 2800, 2750, 2600, 
+        2750, 2700, 2500, 2600, 2750, 2700,
+        // 2023
+        2850, 2800, 2850, 2900, 2880, 2950, 
+        3050, 2980, 2900, 2950, 3100, 3200,
+        // 2024
+        3250, 3300, 3350, 3380
+      ]
+    };
+
+    // Significant events to annotate
+    const significantEvents = [
+      {
+        date: 'Jun 2016',
+        title: 'Brexit Referendum',
+        description: 'UK votes to leave the European Union, causing market volatility.',
+        index: 29
+      },
+      {
+        date: 'Nov 2016',
+        title: 'US Presidential Election',
+        description: 'Donald Trump elected as US President, leading to market rally.',
+        index: 34
+      },
+      {
+        date: 'Dec 2018',
+        title: 'Market Correction',
+        description: 'Global market correction due to trade tensions and interest rate concerns.',
+        index: 59
+      },
+      {
+        date: 'Mar 2020',
+        title: 'COVID-19 Pandemic',
+        description: 'Markets crash as COVID-19 becomes a global pandemic, triggering lockdowns worldwide.',
+        index: 74
+      },
+      {
+        date: 'Nov 2020',
+        title: 'Vaccine Announcement',
+        description: 'COVID-19 vaccine efficacy announcements lead to market rally.',
+        index: 82
+      },
+      {
+        date: 'Jan 2022',
+        title: 'Inflation Concerns',
+        description: 'Markets begin to decline as inflation rises and central banks signal rate hikes.',
+        index: 96
+      },
+      {
+        date: 'Feb 2022',
+        title: 'Russia-Ukraine Conflict',
+        description: 'Russia invades Ukraine, causing energy price spikes and market volatility.',
+        index: 97
+      },
+      {
+        date: 'Mar 2023',
+        title: 'Banking Crisis',
+        description: 'Silicon Valley Bank collapse and banking sector concerns.',
+        index: 110
+      },
+      {
+        date: 'Jan 2024',
+        title: 'AI Market Rally',
+        description: 'Markets reach new highs driven by AI technology advancements.',
+        index: 120
+      }
+    ];
+
+    // Find indices for annotations
+    const annotationPoints = significantEvents.map(event => {
+      const index = msciData.labels.indexOf(event.date);
+      return {
+        ...event,
+        index: index,
+        value: msciData.values[index]
+      };
+    });
+
+    // Create the chart
+    const ctx = document.getElementById('msciWorldChart').getContext('2d');
+    
+    // Create annotations configuration
+    const annotations = {};
+    
+    annotationPoints.forEach((point, i) => {
+      annotations[`point${i}`] = {
+        type: 'point',
+        xValue: point.index,
+        yValue: point.value,
+        backgroundColor: 'rgba(255, 0, 0, 0.8)',
+        borderColor: 'white',
+        borderWidth: 2,
+        radius: 6,
+        onClick: function(e) {
+          // This is handled by our custom click handler
+        }
+      };
+    });
+
+    // Create the chart
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: msciData.labels,
+        datasets: [{
+          label: 'MSCI World Index',
+          data: msciData.values,
+          borderColor: 'rgb(54, 162, 235)',
+          backgroundColor: 'rgba(54, 162, 235, 0.1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.2,
+          pointRadius: 0,
+          pointHoverRadius: 5,
+          pointHitRadius: 10
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          },
+          annotation: {
+            annotations: annotations
+          },
+          tooltip: {
+            enabled: true,
+            mode: 'index',
+            intersect: false,
+            callbacks: {
+              title: function(tooltipItems) {
+                return tooltipItems[0].label;
+              },
+              label: function(context) {
+                return `MSCI World: ${context.parsed.y.toLocaleString()}`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false
+            },
+            ticks: {
+              maxRotation: 45,
+              minRotation: 45,
+              autoSkip: true,
+              maxTicksLimit: 10
+            }
+          },
+          y: {
+            grid: {
+              color: 'rgba(0, 0, 0, 0.05)'
+            },
+            title: {
+              display: true,
+              text: 'Index Value'
+            }
+          }
+        },
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
+        hover: {
+          mode: 'index',
+          intersect: false
+        }
+      }
+    });
+
+    // Create custom legend
+    const customLegend = document.getElementById('customLegend');
+    
+    // Add MSCI World Index to legend
+    const indexLegendItem = document.createElement('div');
+    indexLegendItem.className = 'legend-item';
+    
+    const indexLegendColor = document.createElement('div');
+    indexLegendColor.className = 'legend-color';
+    indexLegendColor.style.backgroundColor = 'rgb(54, 162, 235)';
+    
+    const indexLegendText = document.createElement('span');
+    indexLegendText.textContent = 'MSCI World Index';
+    
+    indexLegendItem.appendChild(indexLegendColor);
+    indexLegendItem.appendChild(indexLegendText);
+    customLegend.appendChild(indexLegendItem);
+    
+    // Add significant events to legend
+    const eventLegendItem = document.createElement('div');
+    eventLegendItem.className = 'legend-item';
+    
+    const eventLegendColor = document.createElement('div');
+    eventLegendColor.className = 'legend-color';
+    eventLegendColor.style.backgroundColor = 'rgba(255, 0, 0, 0.8)';
+    
+    const eventLegendText = document.createElement('span');
+    eventLegendText.textContent = 'Significant Events';
+    
+    eventLegendItem.appendChild(eventLegendColor);
+    eventLegendItem.appendChild(eventLegendText);
+    customLegend.appendChild(eventLegendItem);
+
+    // Handle tooltip for annotations
+    const tooltip = document.getElementById('tooltip');
+    
+    chart.canvas.addEventListener('click', function(e) {
+      const points = chart.getElementsAtEventForMode(e, 'nearest', { intersect: true }, true);
+      
+      if (points.length) {
+        const firstPoint = points[0];
+        const index = firstPoint.index;
+        
+        // Check if this is one of our annotation points
+        const eventPoint = annotationPoints.find(p => p.index === index);
+        
+        if (eventPoint) {
+          // Position the tooltip
+          const position = chart.canvas.getBoundingClientRect();
+          const tooltipX = position.left + window.scrollX + chart.scales.x.getPixelForValue(index);
+          const tooltipY = position.top + window.scrollY + chart.scales.y.getPixelForValue(eventPoint.value) - 120;
+          
+          // Set tooltip content
+          tooltip.innerHTML = `
+            <div class="tooltip-title">${eventPoint.title}</div>
+            <div class="tooltip-date">${eventPoint.date}</div>
+            <div class="tooltip-description">${eventPoint.description}</div>
+          `;
+          
+          // Position and show tooltip
+          tooltip.style.left = `${tooltipX}px`;
+          tooltip.style.top = `${tooltipY}px`;
+          tooltip.style.display = 'block';
+        }
+      }
+    });
+    
+    // Hide tooltip when clicking elsewhere
+    document.addEventListener('click', function(e) {
+      if (!chart.canvas.contains(e.target)) {
+        tooltip.style.display = 'none';
+      }
+    });
+    
+    // Show tooltip on hover over annotation points
+    chart.canvas.addEventListener('mousemove', function(e) {
+      const points = chart.getElementsAtEventForMode(e, 'nearest', { intersect: true }, true);
+      
+      if (points.length) {
+        const firstPoint = points[0];
+        const index = firstPoint.index;
+        
+        // Check if this is one of our annotation points
+        const eventPoint = annotationPoints.find(p => p.index === index);
+        
+        if (eventPoint) {
+          chart.canvas.style.cursor = 'pointer';
+        } else {
+          chart.canvas.style.cursor = 'default';
+        }
+      } else {
+        chart.canvas.style.cursor = 'default';
+      }
+    });
+  });
+</script>

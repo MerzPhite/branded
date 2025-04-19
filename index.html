@@ -445,7 +445,8 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 				</div>
 				<br>
 
-				<div style="text-align: center; margin-top: 10px;" class="grid-header">
+				<!-- Add class to the header -->
+				<div style="text-align: center; margin-top: 10px;" class="help-clients-header">
 					<h2><u>How I have helped my clients</u></h2>
 				</div>
 			
@@ -461,17 +462,32 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 				</div>
 
 				<style>
-					@media only screen and (max-width: 480px) {
+					/* More comprehensive mobile detection */
+					@media screen and (max-width: 480px), 
+						   screen and (max-device-width: 480px),
+						   screen and (orientation: portrait) {
 						#mobile-message {
 							display: block !important;
 						}
 						
 						.grid-header {
-							display: none;  /* Hides the header on mobile */
+							display: none !important;
 						}
 						
 						#grid-container {
-							display: none;  /* Ensures grid container is hidden */
+							display: none !important;
+						}
+						
+						.grid-section-wrapper {
+							display: none !important;
+						}
+
+						.help-clients-header {
+							display: none !important;  /* Hide the header on mobile */
+						}
+
+						h2 u {
+							display: none !important;  /* Hide underlined text specifically */
 						}
 					}
 				</style>

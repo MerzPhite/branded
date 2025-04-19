@@ -445,7 +445,7 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 				</div>
 				<br>
 
-				<div style="text-align: center; margin-top: 30px;">
+				<div style="text-align: center; margin-top: 10px;" class="grid-header">
 					<h2><u>How I have helped my clients</u></h2>
 				</div>
 			
@@ -453,7 +453,28 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 				<!-- Grid Section -->
 				<div class="grid-section-wrapper" style="margin-top: 20px; text-align: center; padding: 20px; max-width: 1000px; margin-left: auto; margin-right: auto;">
 					<div id="grid-container" style="width: 90%; margin: 0 auto; display: flex; justify-content: center;"></div>
+					
+					<!-- Mobile message -->
+					<div style="display: none; text-align: center; padding: 20px; color: white;" id="mobile-message">
+						Please view on desktop for the full interactive experience.
+					</div>
 				</div>
+
+				<style>
+					@media only screen and (max-width: 480px) {
+						#mobile-message {
+							display: block !important;
+						}
+						
+						.grid-header {
+							display: none;  /* Hides the header on mobile */
+						}
+						
+						#grid-container {
+							display: none;  /* Ensures grid container is hidden */
+						}
+					}
+				</style>
 
 				<!-- MSCI Chart Section -->
 				<div class="msci-section-wrapper" style="margin-top: 50px; display: none; text-align: center; padding: 20px; max-width: 1000px; margin-left: auto; margin-right: auto;">

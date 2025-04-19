@@ -266,6 +266,13 @@
         grid-row: 8;
         background-color: rgba(33, 45, 77, 0.5);  /* #212D4D with 50% opacity */
     }
+    
+    /* Add mobile visibility control */
+    @media only screen and (max-width: 480px) {
+        .container {
+            display: none;  /* Hides the grid on mobile */
+        }
+    }
 </style>
 
 <div class="container">

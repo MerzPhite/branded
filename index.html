@@ -9,8 +9,8 @@
 		<title>Leo Richardson - Financial Planner </title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<link rel="stylesheet" href="./assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="./assets/css/noscript.css" /></noscript>
 		<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.1.0/dist/chartjs-plugin-annotation.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/apexcharts@latest"></script>
@@ -457,14 +457,14 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 
 				<!-- MSCI Chart Section -->
 				<div class="msci-section-wrapper" style="margin-top: 50px; display: none; text-align: center; padding: 20px; max-width: 1000px; margin-left: auto; margin-right: auto;">
-					<div id="msci-container" style="width: 90%;"></div>
+					<div id="msci-container" style="width: 90%; margin: 0 auto; display: flex; justify-content: center;"></div>
 				</div>
 
 				<script>
 					// Single event listener for all content
 					document.addEventListener('DOMContentLoaded', function() {
 						// Load grid content
-						fetch('grid.html')
+						fetch('./grid.html')
 							.then(response => response.text())
 							.then(html => {
 								document.getElementById('grid-container').innerHTML = html;
@@ -474,7 +474,7 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 							});
 
 						// Load MSCI content separately
-						fetch('msci.html')
+						fetch('./msci.html')
 							.then(response => response.text())
 							.then(html => {
 								document.getElementById('msci-container').innerHTML = html;

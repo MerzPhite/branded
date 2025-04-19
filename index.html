@@ -11,6 +11,11 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/apexcharts@latest"></script>
+		<script src="https://d3js.org/d3.v7.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
 	</head>
 
 	<!-- Google tag (gtag.js) -->
@@ -41,6 +46,8 @@
                                 <h4>Helping you plan for the future you want</h4>
 								<p> Investments - Retirement Planning - Pension Management <br>
                                 Estate Planning - Financial Protection </p>
+
+								
 							</div>
 						</div>
 						<nav>
@@ -52,6 +59,7 @@
 								<!--<li><a href="#elements">Elements</a></li>-->
 							</ul>
 						</nav>
+						
 					</header>
 
 				<!-- Main -->
@@ -145,7 +153,11 @@
 
                                     <br>
                                 </p>
+
+                               
 							</article>
+
+						
 
 						<!-- Contact -->
 							<article id="contact">
@@ -421,6 +433,465 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 							</article>
 
 					</div>
+
+					
+
+				<!-- Performance Chart Section -->
+				<div style="display: none; margin-top: 50px; text-align: center; padding: 20px; max-width: 1200px; margin-left: auto; margin-right: auto;">
+					<h2>Navigating my clients</h2>
+					<div style="height: 400px; width: 900px;">
+						<div id="mainPerformanceChart"></div>
+					</div>
+				</div>
+				<br>
+
+				<div style="text-align: center; margin-top: 30px;">
+					<h2><u>How I have helped my clients</u></h2>
+				</div>
+			
+
+				<!-- Grid Section -->
+				<div class="grid-section-wrapper" style="margin-top: 20px; text-align: center; padding: 20px; max-width: 1000px; margin-left: auto; margin-right: auto;">
+					<div id="grid-container" style="width: 90%; margin: 0 auto; display: flex; justify-content: center;"></div>
+				</div>
+
+				<!-- MSCI Chart Section -->
+				<div class="msci-section-wrapper" style="margin-top: 50px; display: none; text-align: center; padding: 20px; max-width: 1000px; margin-left: auto; margin-right: auto;">
+					<div id="msci-container" style="width: 90%;"></div>
+				</div>
+
+				<script>
+					// Single event listener for all content
+					document.addEventListener('DOMContentLoaded', function() {
+						// Load grid content
+						fetch('grid.html')
+							.then(response => response.text())
+							.then(html => {
+								document.getElementById('grid-container').innerHTML = html;
+							})
+							.catch(error => {
+								console.error('Error loading grid:', error);
+							});
+
+						// Load MSCI content separately
+						fetch('msci.html')
+							.then(response => response.text())
+							.then(html => {
+								document.getElementById('msci-container').innerHTML = html;
+								// Don't trigger another DOMContentLoaded event
+								if (typeof Chart !== 'undefined' && document.getElementById('msciWorldChart')) {
+									// Initialize chart directly from msci.html script
+									const chartScript = document.querySelector('#msci-container script:last-of-type');
+									if (chartScript) {
+										eval(chartScript.textContent);
+									}
+								}
+							})
+							.catch(error => {
+								console.error('Error loading MSCI chart:', error);
+							});
+					});
+				</script>
+
+				<!-- World Map Section -->
+				<div style="margin-top: 50px; display: none;  text-align: center; padding: 20px; max-width: 1200px; margin-left: auto; margin-right: auto;">
+					<div id="worldMap" style="height: 400px; width: 100%;"></div>
+				</div>
+
+				<script>
+					document.addEventListener('DOMContentLoaded', function() {
+						try {
+							// FTSE 100 monthly returns (reversed to show chronological order)
+							const monthlyReturns = [0.0000, 0.3400, -6.6400, 2.6900, -6.700, -2.9800, 4.9400, -0.0800, -1.7900, -2.5400, 
+								0.2200, 1.2800, 1.0800, -0.1800, 4.3900, 3.3800, 0.8500, 1.7400, 0.800, -2.4500, 5.2900, -0.6100, 
+								2.3100, 0.8200, -1.6200, 4.3900, -2.7600, 0.8100, 0.800, -0.7800, 1.6300, -2.2200, 4.9300, -2.0100, 
+								-4.00, -2.4200, 6.4200, 2.2500, -0.5400, 1.4600, -4.0800, 1.0500, -5.0900, -2.0700, -3.6100, 3.5800, 
+								1.5200, 2.8900, 1.9100, -3.4600, 3.6900, 2.1700, -5.00, 2.7900, -2.1600, 1.3500, 2.6700, -3.400, 
+								-9.6800, -13.8100, 4.0400, 2.9700, 1.5300, -4.4100, 1.1200, -1.6300, -4.9200, 12.3500, 3.100, -0.8200, 
+								1.1900, 3.5500, 3.8200, 0.7600, 0.2100, -0.0700, 1.2400, -0.4700, 2.1300, -2.4600, 4.6100, 1.0800, 
+								-0.0800, 0.7700, 0.3800, 0.8400, -5.7600, 3.5400, -1.8800, -5.3600, 2.9100, 6.7400, -1.600, 4.2900, 
+								1.3500, -3.100, 3.1300, -5.3900, 1.1500, 2.2300, -3.3800, 2.2700, -3.7600, 1.800, 3.7500, -1.3300, 
+								-0.0100, 4.2300, 2.4100, 1.6100, -1.3400, 2.500, 0.100, -1.6700, -1.5400, 2.1800, -1.3800, 6.1300, 
+								1.5700, -2.5800, -7.2600];
+
+							// Calculate cumulative returns
+							let cumulativeReturns = [];
+							let cumulative = 100;
+
+							monthlyReturns.forEach(return_value => {
+								cumulative *= (1 + return_value/100);
+								cumulativeReturns.push(Math.round((cumulative - 100) * 100) / 100);
+							});
+
+							const options = {
+								series: [{
+									name: 'FTSE 100 Cumulative Performance',
+									data: cumulativeReturns
+								}],
+								chart: {
+									type: 'line',
+									height: 400,
+									background: 'transparent',
+									animations: {
+										enabled: false
+									}
+								},
+								stroke: {
+									curve: 'smooth',
+									width: 2,
+									colors: ['#ffffff']
+								},
+								xaxis: {
+									categories: ['Apr 2015', 'May 2015', 'Jun 2015', 'Jul 2015', 'Aug 2015', 'Sep 2015', 'Oct 2015', 'Nov 2015', 'Dec 2015', 'Jan 2016', 
+										'Feb 2016', 'Mar 2016', 'Apr 2016', 'May 2016', 'Jun 2016', 'Jul 2016', 'Aug 2016', 'Sep 2016', 'Oct 2016', 'Nov 2016', 'Dec 2016', 
+										'Jan 2017', 'Feb 2017', 'Mar 2017', 'Apr 2017', 'May 2017', 'Jun 2017', 'Jul 2017', 'Aug 2017', 'Sep 2017', 'Oct 2017', 'Nov 2017', 
+										'Dec 2017', 'Jan 2018', 'Feb 2018', 'Mar 2018', 'Apr 2018', 'May 2018', 'Jun 2018', 'Jul 2018', 'Aug 2018', 'Sep 2018', 'Oct 2018', 
+										'Nov 2018', 'Dec 2018', 'Jan 2019', 'Feb 2019', 'Mar 2019', 'Apr 2019', 'May 2019', 'Jun 2019', 'Jul 2019', 'Aug 2019', 'Sep 2019', 
+										'Oct 2019', 'Nov 2019', 'Dec 2019', 'Jan 2020', 'Feb 2020', 'Mar 2020', 'Apr 2020', 'May 2020', 'Jun 2020', 'Jul 2020', 'Aug 2020', 
+										'Sep 2020', 'Oct 2020', 'Nov 2020', 'Dec 2020', 'Jan 2021', 'Feb 2021', 'Mar 2021', 'Apr 2021', 'May 2021', 'Jun 2021', 'Jul 2021', 
+										'Aug 2021', 'Sep 2021', 'Oct 2021', 'Nov 2021', 'Dec 2021', 'Jan 2022', 'Feb 2022', 'Mar 2022', 'Apr 2022', 'May 2022', 'Jun 2022', 
+										'Jul 2022', 'Aug 2022', 'Sep 2022', 'Oct 2022', 'Nov 2022', 'Dec 2022', 'Jan 2023', 'Feb 2023', 'Mar 2023', 'Apr 2023', 'May 2023', 
+										'Jun 2023', 'Jul 2023', 'Aug 2023', 'Sep 2023', 'Oct 2023', 'Nov 2023', 'Dec 2023', 'Jan 2024', 'Feb 2024', 'Mar 2024', 'Apr 2024', 
+										'May 2024', 'Jun 2024', 'Jul 2024', 'Aug 2024', 'Sep 2024', 'Oct 2024', 'Nov 2024', 'Dec 2024', 'Jan 2025', 'Feb 2025', 'Mar 2025', 
+										'Apr 2025'],
+									labels: {
+										formatter: function(value) {
+											if (value === 'Jan 2015' || value === 'Feb 2015' || value === 'Mar 2015' || value === 'May 2016' || value === 'Jun 2015' || value === 'Jul 2015' || value === 'Aug 2015' || value === 'Sep 2015' || value === 'Nov 2015' || value === 'Dec 2015' ||
+												value === 'Jan 2016' || value === 'Feb 2016' || value === 'Mar 2016' || value === 'May 2016' || value === 'Jun 2016' || value === 'Jul 2016' || value === 'Aug 2016' || value === 'Sep 2016' || value === 'Nov 2016' || value === 'Dec 2016' ||
+												value === 'Jan 2017' || value === 'Feb 2017' || value === 'Mar 2017' || value === 'May 2017' || value === 'Jun 2017' || value === 'Jul 2017' || value === 'Aug 2017' || value === 'Sep 2017' || value === 'Nov 2017' || value === 'Dec 2017' ||
+												value === 'Jan 2018' || value === 'Feb 2018' || value === 'Mar 2018' || value === 'May 2018' || value === 'Jun 2018' || value === 'Jul 2018' || value === 'Aug 2018' || value === 'Sep 2018' || value === 'Nov 2018' || value === 'Dec 2018' ||
+												value === 'Jan 2019' || value === 'Feb 2019' || value === 'Mar 2019' || value === 'May 2019' || value === 'Jun 2019' || value === 'Jul 2019' || value === 'Aug 2019' || value === 'Sep 2019' || value === 'Nov 2019' || value === 'Dec 2019' ||
+												value === 'Jan 2020' || value === 'Feb 2020' || value === 'Mar 2020' || value === 'May 2020' || value === 'Jun 2020' || value === 'Jul 2020' || value === 'Aug 2020' || value === 'Sep 2020' || value === 'Nov 2020' || value === 'Dec 2020' ||
+												value === 'Jan 2021' || value === 'Feb 2021' || value === 'Mar 2021' || value === 'May 2021' || value === 'Jun 2021' || value === 'Jul 2021' || value === 'Aug 2021' || value === 'Sep 2021' || value === 'Nov 2021' || value === 'Dec 2021' ||
+												value === 'Jan 2022' || value === 'Feb 2022' || value === 'Mar 2022' || value === 'May 2022' || value === 'Jun 2022' || value === 'Jul 2022' || value === 'Aug 2022' || value === 'Sep 2022' || value === 'Nov 2022' || value === 'Dec 2022' ||
+												value === 'Jan 2023' || value === 'Feb 2023' || value === 'Mar 2023' || value === 'May 2023' || value === 'Jun 2023' || value === 'Jul 2023' || value === 'Aug 2023' || value === 'Sep 2023' || value === 'Nov 2023' || value === 'Dec 2023' ||
+												value === 'Jan 2024' || value === 'Feb 2024' || value === 'Mar 2024' || value === 'May 2024' || value === 'Jun 2024' || value === 'Jul 2024' || value === 'Aug 2024' || value === 'Sep 2024' || value === 'Nov 2024' || value === 'Dec 2024' ||
+												value === 'Jan 2025' || value === 'Feb 2025' || value === 'Mar 2025' || value === 'May 2025' || value === 'Jun 2025' || value === 'Jul 2025' || value === 'Aug 2025' || value === 'Sep 2025' || value === 'Nov 2025' || value === 'Dec 2025')
+											{
+												return '';  // Hide these labels
+											}
+											return value;  // Show all other labels normally
+										},
+										style: {
+											colors: '#ffffff'
+										}
+									},
+									axisBorder: {
+										show: false
+									},
+									axisTicks: {
+										tickAmount: 10  // This will show approximately 10 labels evenly spaced
+									}
+								},
+								yaxis: {
+									show: false  // This will hide the y-axis completely
+								},
+								grid: {
+									show: false
+								},
+								annotations: {
+									xaxis: [
+										{
+											x: 'Apr 2016',  // Adjusted to the closest available label
+											borderColor: '#ffffff',
+											strokeDashArray: 0,
+											label: {
+												text: 'Brexit Vote',
+												orientation: 'horizontal',
+												position: 'top',
+												offsetY: -5,
+												style: {
+													background: 'rgba(0, 0, 0, 0.8)',
+													color: '#ffffff',
+													padding: { left: 5, right: 5 }
+												}
+											}
+										},
+										{
+											x: 'Mar 2020',  // Adjusted to the closest available label
+											borderColor: '#ffffff',
+											strokeDashArray: 0,
+											label: {
+												text: 'Russia Invades Ukraine',
+												orientation: 'horizontal',
+												position: 'top',
+												offsetY: 45,
+												style: {
+												}
+											}
+										},
+										{
+											x: 'Feb 2022',  // Adjusted to the closest available label
+											borderColor: '#ffffff',
+											strokeDashArray: 0,
+											label: {
+												text: 'Russia Invades Ukraine',
+												orientation: 'horizontal',
+												position: 'top',
+												offsetY: -5,
+												style: {
+													background: 'rgba(0, 0, 0, 0.8)',
+													color: '#ffffff',
+													padding: { left: 5, right: 5 }
+												}
+											}
+										},
+										{
+											x: 'Sep 2022',  // Adjusted to the closest available label
+											borderColor: '#ffffff',
+											strokeDashArray: 0,
+											label: {
+												text: 'UK Mini-Budget Crisis',
+												orientation: 'horizontal',
+												position: 'top',
+												offsetY: -5,
+												style: {
+													background: 'rgba(0, 0, 0, 0.8)',
+													color: '#ffffff',
+													padding: { left: 5, right: 5 }
+												}
+											}
+										},
+										{
+											x: 'Mar 2023',  // Adjusted to the closest available label
+											borderColor: '#ffffff',
+											strokeDashArray: 0,
+											label: {
+												text: 'Silicon Valley Bank Collapse',
+												orientation: 'horizontal',
+												position: 'top',
+												offsetY: -5,
+												style: {
+													background: 'rgba(0, 0, 0, 0.8)',
+													color: '#ffffff',
+													padding: { left: 5, right: 5 }
+												}
+											}
+										},
+										{
+											x: 'Sep 2023',  // Adjusted to the closest available label
+											borderColor: '#ffffff',
+											strokeDashArray: 0,
+											label: {
+												text: 'Inflation hits 40-year high',
+												orientation: 'horizontal',
+												position: 'top',
+												offsetY: -5,
+												style: {
+													background: 'rgba(0, 0, 0, 0.8)',
+													color: '#ffffff',
+													padding: { left: 5, right: 5 }
+												}
+											}
+										}
+									],
+									points: [
+										{
+											x: 'Jun 2016',
+											y: cumulativeReturns[14],
+											marker: { 
+												size: 3,
+												fillColor: '#ffffff',
+												strokeColor: '#ffffff'
+											},
+											
+											connector: {
+												type: 'line',
+												color: '#ffffff',
+												width: 2,
+												dashArray: 0
+											}
+										},
+										{
+											x: 'Mar 2020',
+											y: cumulativeReturns[59],
+											marker: {
+												size: 0
+											},
+											label: {
+												text: 'COVID-19',
+												orientation: 'horizontal',
+												offsetY: -200,
+												style: {
+													background: 'rgba(0, 0, 0, 0.8)',
+													color: '#ffffff',
+													padding: { left: 5, right: 5 }
+												}
+											}
+										},
+										{
+											x: 'Feb 2022',
+											y: cumulativeReturns[82],
+											marker: {
+												size: 0
+											},
+											label: {
+												text: 'Russia Invades Ukraine',
+												orientation: 'horizontal',
+												offsetY: -100,
+												style: {
+													background: 'rgba(0, 0, 0, 0.8)',
+													color: '#ffffff',
+													padding: { left: 5, right: 5 }
+												}
+											}
+										},
+										{
+											x: 'Sep 2023',
+											y: cumulativeReturns[102],
+											marker: {
+												size: 0
+											},
+											label: {
+												text: 'Inflation hits 40-year high',
+												orientation: 'horizontal',
+												offsetY: -110,
+												style: {
+													background: 'rgba(0, 0, 0, 0.8)',
+													color: '#ffffff',
+													padding: { left: 5, right: 5 }
+												}
+											}
+										},
+										{
+											x: 'Oct 2022',
+											y: cumulativeReturns[59],
+											marker: { size: 0 },
+											label: {
+												text: 'UK Mini-Budget Crisis',
+												orientation: 'horizontal',
+												offsetY: -70,
+												style: {
+													background: 'rgba(0, 0, 0, 0.8)',
+													color: '#ffffff',
+													padding: { left: 5, right: 5 }
+												}
+											}
+										},
+										{
+											x: 'Mar 2023',
+											y: cumulativeReturns[95],
+											marker: { size: 0 },
+											label: {
+												text: 'Silicon Valley Bank Collapse',
+												orientation: 'horizontal',
+												offsetY: -50,
+												style: {
+													background: 'rgba(0, 0, 0, 0.8)',
+													color: '#ffffff',
+													padding: { left: 5, right: 5 }
+												}
+											}
+										}
+									]
+								},
+								legend: {
+									labels: {
+										colors: '#ffffff'
+									}
+								},
+								tooltip: {
+									theme: 'dark',
+									y: {
+										formatter: function(value) {
+											return value + '%';
+										}
+									}
+								}
+							};
+
+							const chart = new ApexCharts(document.querySelector("#mainPerformanceChart"), options);
+							chart.render();
+						} catch (error) {
+							console.error('Error creating chart:', error);
+						}
+					});
+
+					document.addEventListener('DOMContentLoaded', function() {
+						const width = 800;
+						const height = 400;
+
+						const svg = d3.select("#worldMap")
+							.append("svg")
+							.attr("width", width)
+							.attr("height", height)
+							.style("background-color", "transparent");
+
+						const projection = d3.geoMercator()
+							.scale(130)
+							.translate([width / 2, height / 1.5]);
+
+						const path = d3.geoPath()
+							.projection(projection);
+
+						const highlightSequence = [
+							{ id: 826, name: "United Kingdom" },
+							{ id: 840, name: "United States" },
+							{ id: 276, name: "Germany" },
+							{ id: 392, name: "Japan" }
+						];
+
+						let currentIndex = 0;
+
+						d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
+							.then(function(data) {
+								const countries = topojson.feature(data, data.objects.countries);
+								countries.features = countries.features.filter(d => d.properties.name !== 'Antarctica');
+
+								const paths = svg.selectAll("path")
+									.data(countries.features)
+									.enter()
+									.append("path")
+									.attr("d", path)
+									.attr("id", d => `country-${d.id}`)
+									.style("fill", "none")
+									.style("stroke", "#ffffff")
+									.style("stroke-width", "0.5px")
+									.style("vector-effect", "non-scaling-stroke");
+
+								function highlightCountry() {
+									// Reset all countries with transition
+									paths.transition()
+										.duration(500)  // Fade out over 0.5 seconds
+										.style("stroke", "#ffffff")
+										.style("stroke-width", "0.5px");
+
+									// Highlight current country with transition
+									const currentCountry = highlightSequence[currentIndex];
+									svg.select(`#country-${currentCountry.id}`)
+										.transition()
+										.duration(1500)  // Fade in over 0.5 seconds
+										.style("stroke", "#ffff99")
+										.style("stroke-width", "2px")
+										.transition()
+										.delay(1500)    // Stay highlighted for 1.5 seconds
+										.duration(1500)  // Fade out over 0.5 seconds
+										.style("stroke", "#ffffff")
+										.style("stroke-width", "0.5px");
+
+									// Move to next country
+									currentIndex = (currentIndex + 1) % highlightSequence.length;
+								}
+
+								// Start the sequence
+								highlightCountry();
+								setInterval(highlightCountry, 4000); // Total cycle is 3 seconds
+
+								const zoom = d3.zoom()
+									.scaleExtent([1, 8])
+									.on("zoom", zoomed);
+
+								svg.call(zoom);
+
+								function zoomed(event) {
+									svg.selectAll('path')
+										.attr('transform', event.transform);
+								}
+							});
+					});
+				</script>
+
+				
 
 				<!-- Footer -->
 					<footer id="footer">

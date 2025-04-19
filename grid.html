@@ -1,0 +1,321 @@
+<style>
+    .container {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        grid-template-rows: auto;
+        gap: 5px;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        margin-top: 10px;
+        font-size: clamp(8px, 1.2vw, 16px); /* Responsive font size */
+    }
+    
+    .section-title {
+        font-size: clamp(10px, 1.4vw, 18px);
+        color: white;
+        margin-bottom: 5px;
+        font-weight: normal;
+    }
+    
+    /* Section headers */
+    .investments-header {
+        grid-column: 1 / 5;
+        grid-row: 1;
+        background-color: rgba(176, 190, 214, 0.5);
+        padding: clamp(5px, 1vw, 15px);
+        border: 2px solid white;
+        border-radius: 4px;
+    }
+    
+    .financial-planning-header {
+        grid-column: 5 / 10;
+        grid-row: 1;
+        background-color: rgba(164, 157, 182, 0.5);
+        padding: clamp(5px, 1vw, 15px);
+        border: 2px solid white;
+        border-radius: 4px;
+    }
+    
+    .behavioral-header {
+        grid-column: 5 / 10;
+        grid-row: 9;
+        background-color: rgba(84, 76, 108, 0.5);
+        padding: clamp(5px, 1vw, 15px);
+        border: 2px solid white;
+        border-radius: 4px;
+    }
+    
+    .tax-planning-header {
+        grid-column: 1 / 5;
+        grid-row: 9;
+        background-color: rgba(71, 75, 115, 0.2);
+        padding: clamp(5px, 1vw, 15px);
+        border: 2px solid white;
+        border-radius: 4px;
+    }
+    
+    .other-header {
+        grid-column: 10 / 13;
+        grid-row: 1;
+        background-color: rgba(33, 45, 77, 0.5);  /* Added background color */
+        padding: clamp(5px, 1vw, 15px);
+        border: 2px solid white;
+        border-radius: 4px;
+    }
+    
+    /* Grid cells */
+    .cell {
+        padding: clamp(5px, 1vw, 15px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        line-height: 1.4;
+        color: white;
+        min-height: clamp(40px, 8vw, 80px);
+    }
+    
+    /* INVESTMENTS section */
+    .investment-policy {
+        grid-column: 1 / 3;
+        grid-row: 2 / 4;
+        background-color: rgba(176, 190, 214, 0.5);  /* #B0BED6 with 50% opacity */
+    }
+    
+    .tax-efficient-savings {
+        grid-column: 3 / 5;
+        grid-row: 2 / 4;
+        background-color: rgba(176, 190, 214, 0.5);  /* #B0BED6 with 50% opacity */
+    }
+    
+    .asset-allocation {
+        grid-column: 1 / 5;
+        grid-row: 4;
+        background-color: rgba(176, 190, 214, 0.5);  /* #B0BED6 with 50% opacity */
+    }
+    
+    .shield {
+        grid-column: 1 / 5;
+        grid-row: 5;
+        background-color: rgba(176, 190, 214, 0.5);  /* #B0BED6 with 50% opacity */
+    }
+    
+    /* FINANCIAL PLANNING section */
+    .annual-planning {
+        grid-column: 5 / 7;
+        grid-row: 2 / 4;
+        background-color: rgba(164, 157, 182, 0.5);  /* #A49DB6 with 50% opacity */
+    }
+    
+    .formalise-goals {
+        grid-column: 7 / 9;
+        grid-row: 2;
+        background-color: rgba(164, 157, 182, 0.5);  /* #A49DB6 with 50% opacity */
+    }
+    
+    .tax-efficient-retirement {
+        grid-column: 9 / 10;
+        grid-row: 2 / 4;
+        background-color: rgba(164, 157, 182, 0.5);  /* #A49DB6 with 50% opacity */
+    }
+    
+    .accountability {
+        grid-column: 7 / 9;
+        grid-row: 3;
+        background-color: rgba(164, 157, 182, 0.5);  /* #A49DB6 with 50% opacity */
+    }
+    
+    .second-opinion {
+        grid-column: 7 / 8;
+        grid-row: 4;
+        background-color: rgba(164, 157, 182, 0.5);  /* #A49DB6 with 50% opacity */
+    }
+    
+    .withdrawal {
+        grid-column: 8 / 10;
+        grid-row: 4;
+        background-color: rgba(164, 157, 182, 0.5);  /* #A49DB6 with 50% opacity */
+    }
+    
+    .adhoc-meetings {
+        grid-column: 5 / 7;
+        grid-row: 4 / 6;
+        background-color: rgba(164, 157, 182, 0.5);
+    }
+    
+    .outsourced {
+        grid-column: 7 / 9;
+        grid-row: 5;
+        background-color: rgba(164, 157, 182, 0.5);  /* #A49DB6 with 50% opacity */
+    }
+    
+    .prioritise {
+        grid-column: 9 / 10;
+        grid-row: 5;
+        background-color: rgba(164, 157, 182, 0.5);  /* #A49DB6 with 50% opacity */
+    }
+    
+    /* TAX PLANNING section */
+    .proactive-tax {
+        grid-column: 1 / 3;
+        grid-row: 7;
+        background-color: rgba(71, 75, 115, 0.2);  /* #474B73 with 50% opacity */
+    }
+    
+    .tax-efficient-estate {
+        grid-column: 3 / 5;
+        grid-row: 7 / 9;        
+        background-color: rgba(71, 75, 115, 0.2);  /* #474B73 with 50% opacity */
+    }
+    
+    .education {
+        grid-column: 1 / 3;
+        grid-row: 8;
+        background-color: rgba(71, 75, 115, 0.2);  /* #474B73 with 50% opacity */
+    }
+    
+    /* BEHAVIORAL section */
+    .helping-avoid {
+        grid-column: 5 / 7;
+        grid-row: 7;
+        background-color: rgba(84, 76, 108, 0.5);  /* #544C6C with 50% opacity */
+    }
+    
+    .support-volatile {
+        grid-column: 7 / 10;
+        grid-row: 7;
+        background-color: rgba(84, 76, 108, 0.5);  /* #544C6C with 50% opacity */
+    }
+    
+    .dont-do-that {
+        grid-column: 5 / 7;
+        grid-row: 8;
+        background-color: rgba(84, 76, 108, 0.5);  /* #544C6C with 50% opacity */
+    }
+    
+    .voice-reason {
+        grid-column: 7 / 10;
+        grid-row: 8;
+        background-color: rgba(84, 76, 108, 0.5);  /* #544C6C with 50% opacity */
+    }
+    
+    /* OTHER section */
+    .someone-cares {
+        grid-column: 10 / 12;
+        grid-row: 2;
+        background-color: rgba(33, 45, 77, 0.5);  /* #212D4D with 50% opacity */
+    }
+    
+    .thinking-partner {
+        grid-column: 12 / 13;
+        grid-row: 2;
+        background-color: rgba(33, 45, 77, 0.5);  /* #212D4D with 50% opacity */
+    }
+    
+    .independent {
+        grid-column: 10 / 11;
+        grid-row: 3;
+        background-color: rgba(33, 45, 77, 0.5);  /* #212D4D with 50% opacity */
+    }
+    
+    .support-surviving {
+        grid-column: 11 / 13;
+        grid-row: 3;
+        background-color: rgba(33, 45, 77, 0.5);  /* #212D4D with 50% opacity */
+    }
+    
+    .identifier {
+        grid-column: 10 / 11;
+        grid-row: 4;
+        background-color: rgba(33, 45, 77, 0.5);  /* #212D4D with 50% opacity */
+    }
+    
+    .coordinator {
+        grid-column: 11 / 13;
+        grid-row: 4;
+        background-color: rgba(33, 45, 77, 0.5);  /* #212D4D with 50% opacity */
+    }
+    
+    .referrals {
+        grid-column: 10 / 11;
+        grid-row: 5;
+        background-color: rgba(33, 45, 77, 0.5);  /* #212D4D with 50% opacity */
+    }
+    
+    .financial-project {
+        grid-column: 11 / 13;
+        grid-row: 5;
+        background-color: rgba(33, 45, 77, 0.5);  /* #212D4D with 50% opacity */
+    }
+    
+    .someone-tell {
+        grid-column: 10 / 11;
+        grid-row: 7 / 9;
+        background-color: rgba(33, 45, 77, 0.5);  /* #212D4D with 50% opacity */
+    }
+    
+    .scam-avoidance {
+        grid-column: 11 / 13;
+        grid-row: 7;
+        background-color: rgba(33, 45, 77, 0.5);  /* #212D4D with 50% opacity */
+    }
+    
+    .lessons {
+        grid-column: 11 / 13;
+        grid-row: 8;
+        background-color: rgba(33, 45, 77, 0.5);  /* #212D4D with 50% opacity */
+    }
+</style>
+
+<div class="container">
+    <!-- Section Headers -->
+    <div class="investments-header section-title">INVESTMENTS</div>
+    <div class="financial-planning-header section-title">FINANCIAL PLANNING</div>
+    <div class="other-header section-title">OTHER</div>
+    
+    <!-- INVESTMENTS section -->
+    <div class="cell investment-policy">Investment Policy Statement</div>
+    <div class="cell tax-efficient-savings">Tax-efficient savings strategy</div>
+    <div class="cell asset-allocation">Asset allocation advice & Diversification</div>
+    <div class="cell shield">A shield between you and product salespeople</div>
+    
+    <!-- FINANCIAL PLANNING section -->
+    <div class="cell annual-planning">Annual planning meetings</div>
+    <div class="cell formalise-goals">Formalise your goals</div>
+    <div class="cell tax-efficient-retirement">Tax-efficient retirement income plan</div>
+    <div class="cell accountability">Accountability partner</div>
+    <div class="cell second-opinion">Second opinion service</div>
+    <div class="cell withdrawal">Withdrawal Strategy</div>
+    <div class="cell adhoc-meetings">Ad-hoc meetings for important decisions</div>
+    <div class="cell outsourced">Outsourced financial administration</div>
+    <div class="cell prioritise">Prioritise financial opportunities</div>
+    
+    <!-- TAX PLANNING section -->
+    <div class="cell proactive-tax">Proactive (not reactive) tax planning</div>
+    <div class="cell tax-efficient-estate">Tax-efficient estate planning</div>
+    <div class="cell education">Education on legislation changes</div>
+    
+    <!-- BEHAVIORAL section -->
+    <div class="cell helping-avoid">Helping you avoid regrets</div>
+    <div class="cell support-volatile">Support during volatile markets</div>
+    <div class="cell dont-do-that">A 'don't do that' service</div>
+    <div class="cell voice-reason">A voice of reason during emotional decisions</div>
+    
+    <!-- OTHER section -->
+    <div class="cell someone-cares">Someone who cares about your financial future</div>
+    <div class="cell thinking-partner">Thinking partner</div>
+    <div class="cell independent">Independent sounding board</div>
+    <div class="cell support-surviving">Support for a surviving partner</div>
+    <div class="cell identifier">Identifier of life transitions</div>
+    <div class="cell coordinator">Coordinator between all your professional advisers</div>
+    <div class="cell referrals">Referrals to other professionals</div>
+    <div class="cell financial-project">Financial project manager</div>
+    <div class="cell someone-tell">Someone to tell you what you need to hear</div>
+    <div class="cell scam-avoidance">Scam avoidance</div>
+    <div class="cell lessons">Lessons from other clients</div>
+    
+    <!-- Section Headers moved to bottom -->
+    <div class="tax-planning-header section-title">TAX PLANNING</div>
+    <div class="behavioral-header section-title">BEHAVIOURAL</div>
+</div>
